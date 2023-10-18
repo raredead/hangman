@@ -1,56 +1,45 @@
+<script setup lang="ts">
+import ProjectHeader from './components/ProjectHeader.vue';
+import ProjectFigure from './components/ProjectFigure.vue';
+import ProjectWrong from './components/ProjectWrong.vue';
+import ProjectWord from './components/ProjectWord.vue';
+import ProjectModal from './components/ProjectModal.vue';
+import ProjectNotification from './components/ProjectNotification.vue';
+
+import { computed, ref } from 'vue';
+
+const word = ref('василий')
+const letters = ref<string[]>([])
+const correctLetters = computed(() => letters.value.filter(x => word.value.includes(x)))
+const wrongLetters = computed(() => letters.value.filter(x => !word.value.includes(x)))
+const notification = ref<InstanceType<typeof ProjectNotification> | null>(null)
+
+window.addEventListener('keydown', ({ key }) => {
+    if (letters.value.includes(key)) {
+        notification.value?.openModal()
+        setTimeout(() => notification.value?.closeModal(), 2000)
+        return
+    }
+    if (/[а-яА-ЯёЁ]/.test(key)) {
+        letters.value.push(key.toLowerCase())
+    }
+})
+</script>
+
 <template>
-    <h1>Виселица</h1>
-    <p>Введите букву, чтобы отгадать имя</p>
+    <ProjectHeader />
     <div class="main-container">
-        <svg height="250" width="200" class="main-container__figure">
-            <!-- Rod -->
-            <line x1="60" y1="20" x2="140" y2="20" />
-            <line x1="140" y1="20" x2="140" y2="50" />
-            <line x1="60" y1="20" x2="60" y2="230" />
-            <line x1="20" y1="230" x2="100" y2="230" />
+        <ProjectFigure />
 
-            <!-- Head -->
-            <circle cx="140" cy="70" r="20" />
-            <!-- Body -->
-            <line x1="140" y1="90" x2="140" y2="150" />
-            <!-- Arms -->
-            <!-- <line x1="140" y1="120" x2="120" y2="100" />
-          <line x1="140" y1="120" x2="160" y2="100" /> -->
-            <!-- Legs -->
-            <!-- <line x1="140" y1="150" x2="120" y2="180" />
-          <line x1="140" y1="150" x2="160" y2="180" /> -->
-        </svg>
+        <ProjectWrong 
+        :wrong-letters="wrongLetters"/>
 
-        <div class="main-container__wrong wrong-container">
-            <div class="wrong-container__letters">
-                <p>Ошибки</p>
-                <span>п , </span>
-                <span>м , </span>
-                <span>с </span>
-            </div>
-        </div>
-
-        <div class="main-container__word word-container">
-            <span class="word-container__letter">л</span>
-            <span class="word-container__letter"></span>
-            <span class="word-container__letter">д</span>
-            <span class="word-container__letter"></span>
-            <span class="word-container__letter"></span>
-        </div>
+        <ProjectWord 
+        :word="word" 
+        :correct-letters="correctLetters"/>
     </div>
 
-    <!-- Container for final message -->
-    <div v-if="false" class="main-container__modal modal-container">
-        <div class="modal-container__popup">
-                <h2>Поздравляю, вы победили!</h2>
-                <!-- <h2>Вы проиграли.</h2> -->
-            <!-- <h3>...имя: Лидия</h3> -->
-            <button class="modal-container__btn">Попробовать еще раз</button>
-        </div>
-    </div>
+    <ProjectModal v-if="false" />
 
-    <!-- Notification -->
-    <div class="main-container__notification show">
-        <p>Вы уже вводили этот символ</p>
-    </div>
+    <ProjectNotification ref="notification"/>
 </template>
