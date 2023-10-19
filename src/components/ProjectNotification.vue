@@ -3,17 +3,17 @@ import { ref } from 'vue';
 
 const isVisible = ref(false)
 
-const openModal = () => {
+const openNotify = () => {
     isVisible.value = true
 }
 
-const closeModal = () => {
+const closeNotify = () => {
     isVisible.value = false
 }
 
 defineExpose({
-    openModal,
-    closeModal
+    openNotify,
+    closeNotify
 })
 </script>
 
